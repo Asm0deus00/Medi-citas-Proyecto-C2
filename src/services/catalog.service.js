@@ -1,4 +1,5 @@
 const repo = require('../repositories/base.repository');
+const pool = require('../config/database');
 const v = require('../utils/validate');
 const { ApiError } = require('../utils/errors');
 const definitions = {
@@ -43,6 +44,10 @@ async function get(resource, recordId) {
 async function create(resource, body) {
   if (resource === 'users' && body.role !== 'patient') throw new ApiError(403, 'El alta pública permite solamente pacientes');
   const fields = parseFields(config(resource), body || {});
+  if (resource === 'users') {
+    const [[patient]] = await pool.query('SELECT email FROM patients WHERE id = ?', [fields.patient_id]);
+    if (!patient || patient.email !== fields.email) throw new ApiError(400, 'El correo de la cuenta debe coincidir con el del paciente');
+  }
   return get(resource, await repo.insert(config(resource).table, fields));
 }
 async function edit(resource, recordId, body) {

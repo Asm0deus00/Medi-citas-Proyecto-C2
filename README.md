@@ -6,9 +6,9 @@ API de práctica académica con Node.js, Express y MySQL. **No utiliza interfaz 
 
 1. Importar `database/medicita.sql` en MySQL Workbench (sobre una base nueva).
 2. Ejecutar `npm install` (o `npm.cmd install` en PowerShell si hay bloqueo de scripts).
-3. Copiar `.env.example` a `.env` y escribir la contraseña local de MySQL.
+3. Copiar `.env.example` a `.env`, escribir la contraseña local de MySQL y establecer un SESSION_SECRET aleatorio de al menos 32 caracteres.
 4. Ejecutar `npm start` o `node src/server.js`.
-5. Abrir **http://localhost:5000/api-docs**.
+5. Abrir **http://localhost:5000/api-docs**. Ejecutar **POST /auth/login**, copiar `token`, pulsar **Authorize** y pegar el token (sin prefijo Bearer).
 
 El script SQL crea las tablas y algunas especialidades. Para probar la API, seguir el orden de solicitudes de la colección `postman/MediCita.postman_collection.json`.
 
@@ -23,7 +23,7 @@ El script SQL crea las tablas y algunas especialidades. Para probar la API, segu
 
 ## Observaciones y límites del corte
 
-**La consigna exige contraseñas en texto plano para este corte.** Por ese motivo el ejercicio académico cumple la instrucción, pero esto es **inseguro** para un sistema real. No usar datos reales ni publicar el sistema; para el corte 3 deben incorporarse hashing Argon2id, autenticación real por sesiones o tokens, permisos de acceso, protección de resultados médicos y carga protegida de imágenes. El login actual verifica credenciales, pero no emite sesión ni restringe otros endpoints.
+**La consigna exige contraseñas en texto plano para este corte.** Por ese motivo el ejercicio académico cumple la instrucción, pero esto es **inseguro** para un sistema real. No usar datos reales ni publicar el sistema; para el corte 3 deben incorporarse hashing Argon2id, gestión persistente y revocación de sesiones, protección reforzada de datos y subida privada de imágenes. El login emite un token Bearer de una hora; la API restringe las operaciones privadas por paciente y rol. Las contraseñas siguen en texto plano únicamente por instrucción académica.
 
 El campo `image_path` referencia un archivo de imagen que se almacenaría en un servicio privado más adelante; este corte no implementa subida de archivos. `review_tags` y `review_tag_assignments` permiten crear etiquetas y asociarlas a reseñas mediante los endpoints de la API.
 
@@ -43,7 +43,7 @@ No se generan ingresos cobrados: se registra el precio de cada cita para reporte
 2. Abrir **Pacientes → POST /patients — Agregar paciente** y ejecutar.
 3. Abrir **Usuarios → POST /users — Agregar usuario**, indicando el `patient_id` que se creó.
 4. Abrir **Inicio de sesión → POST /auth/login — Iniciar sesión**.
-5. Abrir **Médicos** para agregar o ver médicos, y **Citas** para agendar.
+5. Para cambios administrativos usar una cuenta `admin` de prueba creada con `database/admin_setup_example.sql`, editando primero el correo y la contraseña ficticia. Para reservar una cita usar la cuenta del paciente y su token.
 
 Las etiquetas visibles de Swagger están en español; los nombres de endpoints y campos JSON siguen en inglés conforme a buenas prácticas. Reinicia el servidor después de reemplazar el proyecto.
 
@@ -52,3 +52,14 @@ Las etiquetas visibles de Swagger están en español; los nombres de endpoints y
 Subir **el contenido de esta carpeta a la raíz del repositorio público**, sin una carpeta `MediCita_GitHub` adicional. No publicar `.env` ni `node_modules`. La variable `DB_PASSWORD` se configura únicamente en el `.env` local; `.env.example` no contiene contraseñas reales.
 
 El enlace `http://localhost:5000/api-docs` es de uso local; para compartir documentación con terceros se requiere un despliegue público independiente.
+
+## Correcciones de auditoría
+
+- Validación de citas dentro de `doctor_schedules` (lunes=1, domingo=0) y rechazo de solapamientos.
+- Rutas privadas con token Bearer; las consultas de paciente se restringen a su identidad.
+- Reseñas visibles solo para su paciente asociado o administradores.
+- Rangos numéricos con mínimo <= máximo y valores clínicos finitos; se admiten negativos.
+- Swagger y Postman describen/usan tokens; la colección captura automáticamente `authToken` del login.
+- Para probar operaciones administrativas existe `database/admin_setup_example.sql`; NO usar contraseñas reales.
+
+**Estado de validación:** las pruebas automáticas locales comprueban sintaxis y utilidades; las pruebas contra MySQL y los casos de éxito/error por endpoint deben ejecutarse en tu computador y guardarse como evidencia real.

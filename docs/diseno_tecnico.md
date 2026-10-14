@@ -40,4 +40,6 @@ Se prefieren sustantivos plurales y operaciones HTTP GET/POST/PATCH/PUT/DELETE s
 
 ## Limitaciones académicas declaradas
 
-En el corte 2 el enunciado especifica **contraseñas en texto plano**; se mantiene únicamente para cumplir la actividad. No se deben utilizar usuarios reales. El login **no crea sesiones ni protege los recursos**: la autorización por roles, el control de acceso a resultados clínicos y la protección de archivos se deben implementar antes de un uso real. También faltan gestión de horarios excepcionales, subida física de imágenes y acceso externo desplegado. Son funciones fuera del alcance de este prototipo local, no garantías de producción.
+En el corte 2 el enunciado especifica **contraseñas en texto plano**; se mantiene únicamente para cumplir la actividad. No se deben utilizar usuarios reales. El inicio de sesión emite un token Bearer con firma HMAC y expiración de una hora. Las rutas privadas exigen ese token y aplican reglas de autorización por paciente y administrador; antes de operar con datos reales todavía se requerirían hashing de contraseñas, revocación de tokens, auditoría y almacenamiento privado de archivos. También faltan gestión de horarios excepcionales, subida física de imágenes y acceso externo desplegado. Son funciones fuera del alcance de este prototipo local, no garantías de producción.
+
+La reserva valida que la duración completa pertenezca a una franja de `doctor_schedules`, usando lunes=1 y domingo=0. Los exámenes numéricos admiten valores negativos y exigen un rango de referencia ordenado.

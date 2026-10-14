@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
   title: MediCita API
-  version: 1.1.0
-  description: Documentación organizada por tareas para el Corte 2. Las rutas siguen siendo REST. Proyecto académico sin protección
-    de datos reales ni autorización de sesión.
+  version: 1.2.0
+  description: 'API académica Corte 2 con autenticación Bearer y control de acceso por paciente/administrador. Las
+    contraseñas se almacenan en texto plano exclusivamente por instrucción del corte: usar solo datos ficticios.'
 servers:
 - url: http://localhost:5000/api
 tags:
@@ -59,10 +59,27 @@ paths:
                 properties:
                   user:
                     type: object
+                    properties:
+                      id:
+                        type: integer
+                      patient_id:
+                        type: integer
+                        nullable: true
+                      email:
+                        type: string
+                      role:
+                        type: string
+                        enum:
+                        - patient
+                        - admin
+                  token:
+                    type: string
+                    description: Token Bearer con expiración de una hora.
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      security: []
   /appointments:
     get:
       tags:
@@ -82,8 +99,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Citas
@@ -118,10 +142,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /appointments/{id}:
     parameters:
     - name: id
@@ -140,8 +172,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Citas
@@ -166,10 +206,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Citas
@@ -179,6 +227,12 @@ paths:
           description: Eliminada
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /reviews:
     get:
       tags:
@@ -193,6 +247,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Reseñas
@@ -230,10 +293,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /reviews/{id}:
     parameters:
     - name: id
@@ -252,8 +323,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Reseñas
@@ -280,8 +359,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Reseñas
@@ -291,6 +378,12 @@ paths:
           description: Eliminada
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /reviews/{id}/tags:
     parameters:
     - name: id
@@ -308,11 +401,17 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
+                type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     put:
       tags:
       - Reseñas
@@ -337,11 +436,17 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
+                type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /medical-results:
     get:
       tags:
@@ -369,6 +474,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Resultados médicos
@@ -394,8 +508,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /medical-results/{id}:
     parameters:
     - name: id
@@ -414,8 +536,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Resultados médicos
@@ -434,8 +564,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Resultados médicos
@@ -445,6 +583,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /patients:
     get:
       tags:
@@ -459,8 +603,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Pacientes
@@ -492,10 +643,13 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+      security: []
   /patients/{id}:
     get:
       tags:
@@ -508,8 +662,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Pacientes
@@ -530,10 +692,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Pacientes
@@ -543,6 +713,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -565,8 +741,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Usuarios
@@ -603,10 +786,13 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+      security: []
   /users/{id}:
     get:
       tags:
@@ -619,8 +805,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Usuarios
@@ -641,13 +835,19 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
         '403':
           description: Operación de cuentas bloqueada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
       description: Esta operación está bloqueada por la lógica actual de la API.
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Usuarios
@@ -659,7 +859,11 @@ paths:
           $ref: '#/components/responses/NotFound'
         '403':
           description: Operación de cuentas bloqueada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
       description: Esta operación está bloqueada por la lógica actual de la API.
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -682,8 +886,10 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     post:
       tags:
       - Médicos
@@ -727,10 +933,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /doctors/{id}:
     get:
       tags:
@@ -743,8 +957,11 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     patch:
       tags:
       - Médicos
@@ -765,10 +982,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Médicos
@@ -778,6 +1003,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -800,8 +1031,10 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     post:
       tags:
       - Especialidades
@@ -826,10 +1059,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /specialties/{id}:
     get:
       tags:
@@ -842,8 +1083,11 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     patch:
       tags:
       - Especialidades
@@ -864,10 +1108,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Especialidades
@@ -877,6 +1129,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -899,8 +1157,10 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     post:
       tags:
       - Horarios
@@ -937,10 +1197,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /doctor_schedules/{id}:
     get:
       tags:
@@ -953,8 +1221,11 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+      security: []
     patch:
       tags:
       - Horarios
@@ -975,10 +1246,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Horarios
@@ -988,6 +1267,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -1010,8 +1295,15 @@ paths:
                 type: array
                 items:
                   type: object
+                  additionalProperties: true
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     post:
       tags:
       - Etiquetas de reseñas
@@ -1036,10 +1328,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
   /review_tags/{id}:
     get:
       tags:
@@ -1052,8 +1352,16 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     patch:
       tags:
       - Etiquetas de reseñas
@@ -1074,10 +1382,18 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
+                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     delete:
       tags:
       - Etiquetas de reseñas
@@ -1087,6 +1403,12 @@ paths:
           description: Eliminado
         '404':
           $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - BearerAuth: []
     parameters:
     - name: id
       in: path
@@ -1121,9 +1443,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: El usuario no tiene permisos para acceder al recurso
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       type: object
       properties:
         error:
           type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Token HMAC
+      description: Inicie sesión en POST /auth/login. Copie el campo token al botón Authorize de Swagger.

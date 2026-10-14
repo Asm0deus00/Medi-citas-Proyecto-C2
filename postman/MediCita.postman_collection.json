@@ -8,6 +8,10 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "authToken",
+      "value": ""
     }
   ],
   "item": [
@@ -28,6 +32,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"full_name\": \"Ana Ruiz\",\n  \"email\": \"ana.test@ejemplo.com\",\n  \"phone\": \"3001234567\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -56,6 +63,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"sin-nombre@ejemplo.com\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -193,6 +203,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"patient_id\": 1,\n  \"email\": \"ana.test@ejemplo.com\",\n  \"password\": \"clave123\",\n  \"role\": \"patient\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -221,6 +234,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"patient_id\": 1,\n  \"email\": \"correo-invalido\",\n  \"password\": \"clave123\",\n  \"role\": \"patient\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -249,6 +265,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"ana.test@ejemplo.com\",\n  \"password\": \"clave123\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -259,6 +278,18 @@
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
                 ],
                 "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"authToken\", data.token);",
+                  "}"
+                ]
               }
             }
           ]
@@ -277,6 +308,9 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"ana.test@ejemplo.com\",\n  \"password\": \"incorrecta\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -354,7 +388,10 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/specialties"
+            "url": "{{baseUrl}}/specialties",
+            "auth": {
+              "type": "noauth"
+            }
           },
           "event": [
             {
@@ -458,7 +495,10 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/doctors"
+            "url": "{{baseUrl}}/doctors",
+            "auth": {
+              "type": "noauth"
+            }
           },
           "event": [
             {
@@ -1345,5 +1385,15 @@
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  }
 }

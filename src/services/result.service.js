@@ -18,7 +18,11 @@ async function get(id) {
 }
 function parseDetail(body) {
   const type = v.choice(body.result_type, 'result_type', types);
-  if(type === 'numeric') return { result_type: type, values: { measured_value: v.price(body.measured_value), unit: v.requiredText(body.unit, 'unit', 40), reference_min: v.price(body.reference_min), reference_max: v.price(body.reference_max) } };
+  if (type === 'numeric') {
+    const values = { measured_value: v.measurement(body.measured_value, 'measured_value'), unit: v.requiredText(body.unit, 'unit', 40), reference_min: v.measurement(body.reference_min, 'reference_min'), reference_max: v.measurement(body.reference_max, 'reference_max') };
+    if (values.reference_min > values.reference_max) throw new ApiError(400, 'El mínimo de referencia no puede superar al máximo');
+    return { result_type: type, values };
+  }
   if(type === 'qualitative') return { result_type: type, values: { finding: v.requiredText(body.finding, 'finding', 250) } };
   return { result_type: type, values: { report_text: v.requiredText(body.report_text, 'report_text', 5000), image_path: v.requiredText(body.image_path, 'image_path', 500) } };
 }

@@ -2,8 +2,8 @@ const pool = require('../config/database');
 const repo = require('../repositories/base.repository');
 const v = require('../utils/validate');
 const { ApiError } = require('../utils/errors');
-async function list() {
-  const [rows] = await pool.query('SELECT r.*, a.doctor_id, a.patient_id FROM reviews r JOIN appointments a ON a.id = r.appointment_id ORDER BY r.id DESC');
+async function list(patientId) {
+  const [rows] = patientId == null ? await pool.query('SELECT r.*, a.doctor_id, a.patient_id FROM reviews r JOIN appointments a ON a.id = r.appointment_id ORDER BY r.id DESC') : await pool.query('SELECT r.*, a.doctor_id, a.patient_id FROM reviews r JOIN appointments a ON a.id = r.appointment_id WHERE a.patient_id = ? ORDER BY r.id DESC', [v.id(patientId)]);
   return rows;
 }
 async function get(id) { const review = await repo.one('reviews', v.id(id)); if (!review) throw new ApiError(404, 'Reseña no encontrada'); return review; }

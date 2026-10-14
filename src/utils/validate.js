@@ -31,4 +31,10 @@ const price = (value) => {
   if (value == null || value === '' || !Number.isFinite(n) || n < 0) throw new ApiError(400, 'Precio inválido');
   return n;
 };
-module.exports = { requiredText, optionalText, integer, id, email, dateTime, choice, price };
+const measurement = (value, field) => {
+  if (value === null || value === undefined || value === '' || typeof value === 'boolean' || !Number.isFinite(Number(value))) throw new ApiError(400, `${field} debe ser un número`);
+  const n = Number(value);
+  if (Math.abs(n) > 999999999) throw new ApiError(400, `${field} fuera de rango`);
+  return n;
+};
+module.exports = { requiredText, optionalText, integer, id, email, dateTime, choice, price, measurement };

@@ -22,6 +22,9 @@ async function create(body) {
     if (!patient || !doctor || !doctor.active) throw new ApiError(400, 'Paciente o médico no disponible');
     const [conflicts] = await connection.query(`SELECT id FROM appointments WHERE doctor_id = ? AND status <> 'cancelled' AND starts_at < DATE_ADD(?, INTERVAL ? MINUTE) AND DATE_ADD(starts_at, INTERVAL duration_minutes MINUTE) > ? LIMIT 1`, [doctorId, startsAt, durationMinutes, startsAt]);
     if (conflicts.length) throw new ApiError(409, 'El médico ya tiene una cita en ese horario');
+    const [[withinSchedule]] = await connection.query(`SELECT id FROM doctor_schedules WHERE doctor_id = ? AND weekday = MOD(WEEKDAY(?) + 1, 7) AND TIME(?) >= start_time AND TIME(DATE_ADD(?, INTERVAL ? MINUTE)) <= end_time AND DATE(DATE_ADD(?, INTERVAL ? MINUTE)) = DATE(?) LIMIT 1`, [doctorId, startsAt, startsAt, startsAt, durationMinutes, startsAt, durationMinutes, startsAt]);
+    if (!withinSchedule) throw new ApiError(409, 'La cita está fuera del horario de atención del médico');
+
     const [result] = await connection.query('INSERT INTO appointments (patient_id, doctor_id, starts_at, duration_minutes, price_at_booking, status) VALUES (?, ?, ?, ?, ?, ?)', [patientId, doctorId, startsAt, durationMinutes, doctor.consultation_price, 'scheduled']);
     await connection.commit();
     return get(result.insertId);
