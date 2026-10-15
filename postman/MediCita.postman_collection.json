@@ -2,7 +2,7 @@
   "info": {
     "name": "MediCita Corte 2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Ejecutar en orden sobre una base recién creada. Los IDs usados como ejemplo suponen una base limpia."
+    "description": "API corregida: los recursos privados requieren Bearer. Pruebas en base académica con cuentas de ejemplo; verificar IDs existentes."
   },
   "variable": [
     {
@@ -1382,6 +1382,77 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Validaciones adicionales Corte 2",
+      "item": [
+        {
+          "name": "Consultar catálogo de médicos activos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/doctors"
+          }
+        },
+        {
+          "name": "Buscar paciente por nombre ADMIN",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/patients?search=Ana"
+          }
+        },
+        {
+          "name": "Ver agenda de fecha ADMIN",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/appointments?date=2026-10-19"
+          }
+        },
+        {
+          "name": "Ver disponibilidad de médico",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/doctors/1/availability?date=2026-10-19"
+          }
+        },
+        {
+          "name": "Disponibilidad con fecha incorrecta ERROR 400",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/doctors/1/availability?date=invalid"
+          }
+        },
+        {
+          "name": "Imagen no disponible ERROR 404",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/medical-results/3/image"
+          }
+        },
+        {
+          "name": "Cita con fecha pasada ERROR 400",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/appointments",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": 1,\n  \"doctor_id\": 1,\n  \"starts_at\": \"2020-01-06T09:00:00\",\n  \"duration_minutes\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Resultado inexistente ERROR 404",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/medical-results/9999"
+          }
         }
       ]
     }

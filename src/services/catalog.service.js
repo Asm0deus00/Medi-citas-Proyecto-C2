@@ -31,8 +31,21 @@ function parseFields(definition, body, partial = false) {
   return values;
 }
 function config(resource) { const def = definitions[resource]; if (!def) throw new ApiError(404, 'Recurso desconocido'); return def; }
-async function list(resource) {
-  const rows = await repo.all(config(resource).table);
+async function list(resource, query = {}) {
+  config(resource);
+  if (resource === 'doctors') {
+    const [rows] = await pool.query(`SELECT d.id, d.full_name, d.specialty_id, s.name AS specialty_name,
+      d.schedule_description, d.consultation_price, d.profile, d.active
+      FROM doctors d JOIN specialties s ON s.id=d.specialty_id WHERE d.active=1 ORDER BY d.full_name`);
+    const [slots] = await pool.query('SELECT doctor_id, weekday, start_time, end_time FROM doctor_schedules ORDER BY weekday, start_time');
+    return rows.map(row => ({ ...row, schedules: slots.filter(slot => slot.doctor_id === row.id) }));
+  }
+  if (resource === 'patients' && query.search !== undefined) {
+    const term = v.requiredText(query.search, 'search', 100);
+    const [rows] = await pool.query('SELECT * FROM patients WHERE full_name LIKE ? OR email LIKE ? ORDER BY id', [`%${term}%`, `%${term}%`]);
+    return rows;
+  }
+  const rows = await repo.all(resource);
   return resource === 'users' ? rows.map(({ password, ...user }) => user) : rows;
 }
 async function get(resource, recordId) {

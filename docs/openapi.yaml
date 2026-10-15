@@ -2,8 +2,9 @@ openapi: 3.0.3
 info:
   title: MediCita API
   version: 1.2.0
-  description: 'API académica Corte 2 con autenticación Bearer y control de acceso por paciente/administrador. Las
-    contraseñas se almacenan en texto plano exclusivamente por instrucción del corte: usar solo datos ficticios.'
+  description: 'API académica Corte 2 con autenticación Bearer y control de acceso por paciente/administrador.
+    Las contraseñas se almacenan en texto plano exclusivamente por instrucción del corte: usar solo datos
+    ficticios.'
 servers:
 - url: http://localhost:5000/api
 tags:
@@ -90,6 +91,12 @@ paths:
         in: query
         schema:
           type: integer
+      - name: date
+        in: query
+        description: Fecha YYYY-MM-DD de la agenda; solo administrador puede consultar todas las citas
+        schema:
+          type: string
+          format: date
       responses:
         '200':
           description: Lista
@@ -99,7 +106,21 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    patient_id:
+                      type: integer
+                    doctor_id:
+                      type: integer
+                    starts_at:
+                      type: string
+                    duration_minutes:
+                      type: integer
+                    price_at_booking:
+                      type: number
+                    status:
+                      type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -142,8 +163,21 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  starts_at:
+                    type: string
+                  duration_minutes:
+                    type: integer
+                  price_at_booking:
+                    type: number
+                  status:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -172,8 +206,21 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  starts_at:
+                    type: string
+                  duration_minutes:
+                    type: integer
+                  price_at_booking:
+                    type: number
+                  status:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -206,8 +253,21 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  starts_at:
+                    type: string
+                  duration_minutes:
+                    type: integer
+                  price_at_booking:
+                    type: number
+                  status:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -247,7 +307,17 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    appointment_id:
+                      type: integer
+                    rating:
+                      type: integer
+                    comment:
+                      type: string
+                    wait_minutes:
+                      type: integer
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -293,8 +363,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  appointment_id:
+                    type: integer
+                  rating:
+                    type: integer
+                  comment:
+                    type: string
+                  wait_minutes:
+                    type: integer
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -323,8 +402,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  appointment_id:
+                    type: integer
+                  rating:
+                    type: integer
+                  comment:
+                    type: string
+                  wait_minutes:
+                    type: integer
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -359,8 +447,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  appointment_id:
+                    type: integer
+                  rating:
+                    type: integer
+                  comment:
+                    type: string
+                  wait_minutes:
+                    type: integer
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -402,8 +499,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  appointment_id:
+                    type: integer
+                  rating:
+                    type: integer
+                  comment:
+                    type: string
+                  wait_minutes:
+                    type: integer
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -437,8 +543,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  appointment_id:
+                    type: integer
+                  rating:
+                    type: integer
+                  comment:
+                    type: string
+                  wait_minutes:
+                    type: integer
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -474,7 +589,17 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    patient_id:
+                      type: integer
+                    exam_name:
+                      type: string
+                    result_type:
+                      type: string
+                    created_at:
+                      type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -508,8 +633,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  exam_name:
+                    type: string
+                  result_type:
+                    type: string
+                  created_at:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -536,8 +670,20 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  exam_name:
+                    type: string
+                  result_type:
+                    type: string
+                  created_at:
+                    type: string
+                  detail:
+                    type: object
+                    description: Valores específicos del examen, según result_type
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -564,8 +710,20 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  exam_name:
+                    type: string
+                  result_type:
+                    type: string
+                  created_at:
+                    type: string
+                  detail:
+                    type: object
+                    description: Valores específicos del examen, según result_type
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -603,7 +761,15 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    full_name:
+                      type: string
+                    email:
+                      type: string
+                    phone:
+                      type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -612,6 +778,12 @@ paths:
           $ref: '#/components/responses/Forbidden'
       security:
       - BearerAuth: []
+      parameters:
+      - name: search
+        in: query
+        description: Buscar pacientes por nombre o correo; solo administrador
+        schema:
+          type: string
     post:
       tags:
       - Pacientes
@@ -643,8 +815,15 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -662,8 +841,15 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -692,8 +878,15 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -741,7 +934,15 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    patient_id:
+                      type: integer
+                    email:
+                      type: string
+                    role:
+                      type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -786,8 +987,15 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  email:
+                    type: string
+                  role:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -805,63 +1013,21 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  patient_id:
+                    type: integer
+                  email:
+                    type: string
+                  role:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-      security:
-      - BearerAuth: []
-    patch:
-      tags:
-      - Usuarios
-      summary: 'No disponible: editar usuario'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Campos a modificar de usuario
-              example:
-                email: ana.prueba@example.com
-      responses:
-        '200':
-          description: Actualizado
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '403':
-          description: Operación de cuentas bloqueada
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-      description: Esta operación está bloqueada por la lógica actual de la API.
-      security:
-      - BearerAuth: []
-    delete:
-      tags:
-      - Usuarios
-      summary: 'No disponible: eliminar usuario'
-      responses:
-        '204':
-          description: Eliminado
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '403':
-          description: Operación de cuentas bloqueada
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-      description: Esta operación está bloqueada por la lógica actual de la API.
       security:
       - BearerAuth: []
     parameters:
@@ -876,7 +1042,7 @@ paths:
     get:
       tags:
       - Médicos
-      summary: Ver médicos
+      summary: Ver médicos activos con especialidad y horarios
       responses:
         '200':
           description: Lista
@@ -886,7 +1052,36 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    full_name:
+                      type: string
+                    specialty_id:
+                      type: integer
+                    specialty_name:
+                      type: string
+                    schedule_description:
+                      type: string
+                    consultation_price:
+                      type: number
+                    profile:
+                      type: string
+                    active:
+                      type: integer
+                    schedules:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          doctor_id:
+                            type: integer
+                          weekday:
+                            type: integer
+                          start_time:
+                            type: string
+                          end_time:
+                            type: string
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -933,8 +1128,23 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  specialty_id:
+                    type: integer
+                  specialty_name:
+                    type: string
+                  schedule_description:
+                    type: string
+                  consultation_price:
+                    type: number
+                  profile:
+                    type: string
+                  active:
+                    type: integer
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -957,8 +1167,23 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  specialty_id:
+                    type: integer
+                  specialty_name:
+                    type: string
+                  schedule_description:
+                    type: string
+                  consultation_price:
+                    type: number
+                  profile:
+                    type: string
+                  active:
+                    type: integer
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -982,8 +1207,23 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  full_name:
+                    type: string
+                  specialty_id:
+                    type: integer
+                  specialty_name:
+                    type: string
+                  schedule_description:
+                    type: string
+                  consultation_price:
+                    type: number
+                  profile:
+                    type: string
+                  active:
+                    type: integer
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1031,7 +1271,11 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -1059,8 +1303,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -1083,8 +1330,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -1108,8 +1358,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1157,7 +1410,17 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    doctor_id:
+                      type: integer
+                    weekday:
+                      type: integer
+                    start_time:
+                      type: string
+                    end_time:
+                      type: string
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -1197,8 +1460,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  weekday:
+                    type: integer
+                  start_time:
+                    type: string
+                  end_time:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -1221,8 +1493,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  weekday:
+                    type: integer
+                  start_time:
+                    type: string
+                  end_time:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
       security: []
@@ -1246,8 +1527,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  doctor_id:
+                    type: integer
+                  weekday:
+                    type: integer
+                  start_time:
+                    type: string
+                  end_time:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1295,7 +1585,11 @@ paths:
                 type: array
                 items:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -1328,8 +1622,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -1352,8 +1649,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '404':
           $ref: '#/components/responses/NotFound'
         '401':
@@ -1382,8 +1682,11 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
-                description: Entidad registrada o consultada, con campos propios del recurso y su identificador.
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1417,6 +1720,68 @@ paths:
       schema:
         type: integer
         minimum: 1
+  /doctors/{id}/availability:
+    get:
+      tags:
+      - Médicos
+      summary: Consultar disponibilidad real
+      description: Espacios de 30 minutos para una fecha, excluyendo reservas existentes.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      security: []
+      responses:
+        '200':
+          description: Horarios libres
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  doctor_id:
+                    type: integer
+                  date:
+                    type: string
+                  slots:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /medical-results/{id}/image:
+    get:
+      tags:
+      - Resultados médicos
+      summary: Consultar archivo de imagenología
+      description: El archivo debe existir en el directorio privado, con acceso autorizado.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Imagen o PDF descargable
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   responses:
     BadRequest:

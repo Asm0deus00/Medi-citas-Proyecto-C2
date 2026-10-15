@@ -63,3 +63,17 @@ El enlace `http://localhost:5000/api-docs` es de uso local; para compartir docum
 - Para probar operaciones administrativas existe `database/admin_setup_example.sql`; NO usar contraseñas reales.
 
 **Estado de validación:** las pruebas automáticas locales comprueban sintaxis y utilidades; las pruebas contra MySQL y los casos de éxito/error por endpoint deben ejecutarse en tu computador y guardarse como evidencia real.
+
+
+## Funciones añadidas tras auditoría
+
+- `GET /api/doctors`: catálogo público de profesionales activos con especialidad y franjas registradas.
+- `GET /api/doctors/:id/availability?date=YYYY-MM-DD`: franjas libres de 30 minutos calculadas en la zona horaria académica de Colombia.
+- `GET /api/patients?search=texto`: filtro por nombre/correo (administrador).
+- `GET /api/appointments?date=YYYY-MM-DD`: agenda diaria (administrador; un paciente solo consulta sus propias citas).
+- `GET /api/medical-results/:id/image`: descarga de archivo privado bajo `private_images/` cuando existe; nunca se sirve directamente una ruta arbitraria del cliente.
+- Las citas en fechas pasadas se rechazan. Swagger retira PATCH/DELETE de usuarios: el servicio no admite esas operaciones.
+
+Los archivos de imágenes se incorporan localmente en `private_images/` usando nombres simples como `radiografia-demo.jpg`, y se guardan por referencia en `imaging_results.image_path`. Por seguridad esta carpeta está excluida de Git. Un archivo de demostración debe ser ficticio.
+
+**Importante:** ejecutar las pruebas de integración manuales en una instancia local de MySQL. Los tests `npm test` no demuestran funcionamiento completo de la base de datos ni validan todos los endpoints. El servidor y las credenciales deben permanecer privados; esta API es únicamente académica.
